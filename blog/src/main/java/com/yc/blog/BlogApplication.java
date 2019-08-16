@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
  *  @EnableAutoConfiguration 
  *  	启用SpringBoot自动配置功能
  * 
- * @author tfboys
  *
  */
 

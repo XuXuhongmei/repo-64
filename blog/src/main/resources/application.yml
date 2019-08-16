@@ -6,21 +6,13 @@ spring:
          suffix: .jsp
       
    datasource:
-      url: jdbc:mysql://127.0.0.1:3306/test
+      url: jdbc:mysql://127.0.0.1:3306/blog
       username: root
       password: mysql
       driver-class-name: com.mysql.jdbc.Driver
 
-# 日志输出
-logging:
-   level:
-      com:
-         yc: trace
-
-
-
    # 邮件服务配置
-   main: 
+   mail: 
       # 邮箱服务器地址
       host: smtp.163.com
       # 用户名
@@ -31,11 +23,21 @@ logging:
       default-encoding: UTF-8
       
 # 发送地址
-main:
+mail:
    fromMail:
       addr: q1095701116@163.com
       
       
+
+# 日志输出
+logging:
+   level:
+      com:
+         yc: debug
+
+
+
+
  # 配置端口为 80
 server:
    port: 80   
