@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>  
+    
 <footer class="footer">
   <div class="container">
     <p>&copy; 2016 <a href="">ylsat.com</a> &nbsp; <a href="http://www.miitbeian.gov.cn/" target="_blank" rel="nofollow">豫ICP备20151109-1</a> &nbsp; <a href="sitemap.xml" target="_blank" class="sitemap">网站地图</a></p>
@@ -40,6 +41,7 @@
 <div class="modal fade user-select" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
+    
       <form action="/Admin/Index/login" method="post">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -57,12 +59,50 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button type="submit" class="btn btn-primary">登录</button>
+          <button type="button" onclick="login()" class="btn btn-primary">登录</button>
         </div>
       </form>
     </div>
   </div>
 </div>
+<script type="text/javascript">
+
+function login(){
+	 
+	//ajax 登录
+	var url = "login";
+	var name = loginModalUserNmae.value;
+	var pwd = loginModalUserPwd.value;
+	var param = {name:name, password:pwd};
+	//匿名函数
+	
+	var callback = function(result){
+		if( result.code == 1){
+			 
+			$(".login").text("欢迎：  "+result.data.cnName);
+			//抑制登录窗口下次跳出
+			$(".login").attr("data-target","");
+			//隐藏登录窗口
+			$('#loginModel').modal('hide');
+		}else{
+			alert(result.msg);
+			 
+		}
+	};
+	$.post(url,param,callback);
+
+}
+
+<%if(request.getParameter("login")!=null){ %>
+
+	$(function(){
+		// alert($('#loginModel'));
+		$('#loginModal').modal('show');
+	});
+<%}%>
+</script>
+
+
 <!--右键菜单列表-->
 <div id="rightClickMenu">
   <ul class="list-group rightClickMenuList">
@@ -73,7 +113,9 @@
     <li class="list-group-item"><span>浏览器：</span>Chrome47</li>
   </ul>
 </div>
+
 <script src="js/bootstrap.min.js"></script> 
-<script src="js/jquery.ias.js"></script> 
+ 
 <script src="js/scripts.js"></script>
+
 

@@ -25,6 +25,7 @@ function setCookie(name, value, time) {
     exp.setTime(exp.getTime() + strsec * 1);
     document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
 }
+
 function getsec(str) {
     var str1 = str.substring(1, str.length) * 1;
     var str2 = str.substring(0, 1);
@@ -100,11 +101,11 @@ $("#gotop").click(function () {
  
 //图片延时加载
 $("img.thumb").lazyload({
-    placeholder: "/Home/images/occupying.png",
+    placeholder: "/images/occupying.png",
     effect: "fadeIn"
 });
 $(".single .content img").lazyload({
-    placeholder: "/Home/images/occupying.png",
+    placeholder: "/images/occupying.png",
     effect: "fadeIn"
 });
  
@@ -116,27 +117,46 @@ document.body.onselectstart = document.body.ondrag = function () {
 //启用工具提示
 $('[data-toggle="tooltip"]').tooltip();
  
- 
-//无限滚动反翻页
-jQuery.ias({
+/*//无限滚动反翻页
+var ias = jQuery.ias({
 	history: false,
 	container : '.content',
 	item: '.excerpt',
 	pagination: '.pagination',
 	next: '.next-page a',
-	trigger: '查看更多',
-	loader: '<div class="pagination-loading"><img src="/Home/images/loading.gif" /></div>',
-	triggerPageThreshold: 5,
-	onRenderComplete: function() {
-		$('.excerpt .thumb').lazyload({
-			placeholder: '/Home/images/occupying.png',
-			threshold: 400
-		});
-		$('.excerpt img').attr('draggable','false');
-		$('.excerpt a').attr('draggable','false');
-	}
+	
 });
+
+var page =1;
+ias.on('load',function(event){
+	event.ajaxOptions.data = {page: ++page};
+});
+
  
+ias.on('rendered',function(items){
+	//沙漏
+	$('.excerpt .thumb').lazyload({
+		placeholder: '/images/occupying.png',
+		threshold: 400
+	});
+	$('.excerpt img').attr('draggable','false');
+	$('.excerpt a').attr('draggable','false');
+});
+
+ 
+ias.extension(new IASSpinnerExtension({
+  src: '/images/loading.gif', // 加载等待显示的图片
+}));
+
+
+ias.extension(new IASTriggerExtension({
+	text: '查看更多', //鼠标点击加载提示的文字
+	offset:2   //到第几页后，开始鼠标点击加载
+}));
+*/
+
+
+
 //鼠标滚动超出侧边栏高度绝对定位
 $(window).scroll(function () {
     var sidebar = $('.sidebar');
@@ -220,14 +240,58 @@ $(function(){
 		commentButton.addClass('disabled');
 		promptText.text('正在提交...');
 		$.ajax({   
-			type:"POST",
-			url:"test.php?id=" + articleid,
-			//url:"/Article/comment/id/" + articleid,   
-			data:"commentContent=" + replace_em(commentContent.val()),   
+			type:"POST", 
+			
+			//url
+			url:"comment?articleid=" + articleid,
+			//文章内容
+			data:"content=" + replace_em(commentContent.val()),   
+			
 			cache:false, //不缓存此页面  
 			success:function(data){
-				alert(data);
-				promptText.text('评论成功!');
+				
+				if(data.code == -1){
+					var msgs = "";
+					for (var i=0;i<data.data.length;i++){
+						msgs+= data.data[i].defaultMessage+"\r\n";
+					}
+					alert(msgs);
+				}else{
+					alert(data.msg)
+					
+				}
+				 
+				
+				promptText.text(data.msg);
+				
+				if(data.code==1){
+					var dataIndex = $(".comment-f").last().attr("data-index");
+					var index = parseInt( dataIndex);
+					index ++;
+					
+					//评论成功要更新评论列表
+					var html="<ol class='commentlist'>" +
+					"	<li class='comment-content'>" +
+					"	<span class='comment-f' data-index='???'>#???</span>" + 
+					"    <div class='comment-avatar'><img class='avatar' src='images/icon/icon.png' alt='' /></div>" + 
+					"     <div class='comment-main'>" + 
+					"       <p>来自<span class='address'>河南郑州</span>的用户" + 
+					"            <span class='time'>"+
+					"				(????)" +
+					"				</span><br />" + 
+					"              ????" + 
+					"             </p>" + 
+					"          </div>" + 
+					"        </li>" + 
+					"      </ol>";
+					html = html.replace("???",index);
+					html = html.replace("???",index);
+					html = html.replace("????",data.data.createtime);
+					html = html.replace("????",data.data.content);
+					
+					$(".quotes").before(html);
+				}
+				 
 			    commentContent.val(null);
 				$(".commentlist").fadeIn(300);
 				/*$(".commentlist").append();*/
@@ -244,7 +308,7 @@ $(function(){
 function replace_em(str){
 	str = str.replace(/\</g,'&lt;');
 	str = str.replace(/\>/g,'&gt;');
-	str = str.replace(/\[em_([0-9]*)\]/g,'<img src="/Home/images/arclist/$1.gif" border="0" />');
+	str = str.replace(/\[em_([0-9]*)\]/g,'<img src="/images/arclist/$1.gif" border="0" />');
 	return str;
 }
 

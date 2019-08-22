@@ -1,6 +1,9 @@
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.Date"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core"  prefix="c"%>  
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core"  prefix="c"%> 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %> 
 <!doctype html>
 <html lang="zh-CN">
 <head>
@@ -111,29 +114,67 @@
         </form>
       </div>
     </div>
+    
     <div class="widget widget_sentence">
       <h3>每日一句</h3>
       <div class="widget-sentence-content">
-        <h4>2016年01月05日星期二</h4>
+      
+       <h4><fmt:formatDate value="<%= new java.util.Date() %>" pattern="yyyy年MM月dd日   E"/>
+      </h4>
+ 
+       <!--  <h4>2016年01月05日星期二</h4> -->
         <p>Do not let what you cannot do interfere with what you can do.<br />
           别让你不能做的事妨碍到你能做的事。（John Wooden）</p>
       </div>
     </div>
-    <div class="widget widget_hot">
-      <h3>热门文章</h3>
-      <ul>
-        <li><a href=""><span class="thumbnail"><img class="thumb" data-original="images/excerpt.jpg" src="images/excerpt.jpg" alt=""></span><span class="text">php如何判断一个日期的格式是否正确</span><span class="muted"><i class="glyphicon glyphicon-time"></i> 2016-1-4 </span><span class="muted"><i class="glyphicon glyphicon-eye-open"></i> 120</span></a></li>
-        <li><a href=""><span class="thumbnail"><img class="thumb" data-original="images/excerpt.jpg" src="images/excerpt.jpg" alt=""></span><span class="text">php如何判断一个日期的格式是否正确</span><span class="muted"><i class="glyphicon glyphicon-time"></i> 2016-1-4 </span><span class="muted"><i class="glyphicon glyphicon-eye-open"></i> 120</span></a></li>
-        <li><a href=""><span class="thumbnail"><img class="thumb" data-original="images/excerpt.jpg" src="images/excerpt.jpg" alt=""></span><span class="text">php如何判断一个日期的格式是否正确</span><span class="muted"><i class="glyphicon glyphicon-time"></i> 2016-1-4 </span><span class="muted"><i class="glyphicon glyphicon-eye-open"></i> 120</span></a></li>
-        <li><a href=""><span class="thumbnail"><img class="thumb" data-original="images/excerpt.jpg" src="images/excerpt.jpg" alt=""></span><span class="text">php如何判断一个日期的格式是否正确</span><span class="muted"><i class="glyphicon glyphicon-time"></i> 2016-1-4 </span><span class="muted"><i class="glyphicon glyphicon-eye-open"></i> 120</span></a></li>
-        <li><a href=""><span class="thumbnail"><img class="thumb" data-original="images/excerpt.jpg" src="images/excerpt.jpg" alt=""></span><span class="text">php如何判断一个日期的格式是否正确</span><span class="muted"><i class="glyphicon glyphicon-time"></i> 2016-1-4 </span><span class="muted"><i class="glyphicon glyphicon-eye-open"></i> 120</span></a></li>
-      </ul>
-    </div>
+    
+    <%@ include file="common/hot.jsp" %>
+ 
   </aside>
 </section>
  
 <jsp:include page="common/footer.jsp"></jsp:include>
  
+<script src="js/jquery.ias.js"></script> 
+
+<script type="text/javascript">
+ //无限滚动反翻页
+var ias = jQuery.ias({
+	history: false,
+	container : '.content',
+	item: '.excerpt',
+	pagination: '.pagination',
+	next: '.next-page a',
+	
+});
+
+var page =1;
+ias.on('load',function(event){
+	event.ajaxOptions.data = {page: ++page};
+});
+
+ 
+ias.on('rendered',function(items){
+	//沙漏
+	$('.excerpt .thumb').lazyload({
+		placeholder: '/images/occupying.png',
+		threshold: 400
+	});
+	$('.excerpt img').attr('draggable','false');
+	$('.excerpt a').attr('draggable','false');
+});
+
+ 
+ias.extension(new IASSpinnerExtension({
+  src: '/images/loading.gif', // 加载等待显示的图片
+}));
+
+
+ias.extension(new IASTriggerExtension({
+	text: '查看更多', //鼠标点击加载提示的文字
+	offset:2   //到第几页后，开始鼠标点击加载
+}));
+</script>
 
 </body>
 </html>

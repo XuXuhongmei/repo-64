@@ -14,7 +14,7 @@ public class CategoryBiz {
 
 	@Resource
 	private CategoryMapper cm;
-	
+	 
 	public List<Category> queryAll(){
 		return cm.selectByExample(null);
 	}

@@ -2,21 +2,31 @@
     pageEncoding="UTF-8"%>
     
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core"  prefix="c"%>  
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"  prefix="fmt"%>  
 
 	<div class="title">
         <h3>${param.name == null?'最新发布':param.name }</h3>
-        <div class="more"><a href="">PHP</a><a href="">JavaScript</a><a href="">EmpireCMS</a><a href="">Apache</a><a href="">MySQL</a></div>
+        <div class="more"><a href="">PHP</a><a href="">JavaScript</a>
+        <a href="">EmpireCMS</a><a href="">Apache</a><a href="">MySQL</a></div>
      </div>
      
+     
         <c:forEach items="${aList}" var="a">
-	      <article class="excerpt excerpt-1"><a class="focus" href="article.html" title=""><img class="thumb" data-original="images/excerpt.jpg" src="images/excerpt.jpg" alt=""></a>
-	        <header><a class="cat" href="program">${a.category.name }<i></i></a>
-	          <h2><a href="article.html" title="">${a.title}</a></h2>
+	    <article class="excerpt excerpt-1">
+	      <a class="focus" href="article?id=${a.id }" title="">
+	      	<img class="thumb" data-original="images/excerpt.jpg" src="images/excerpt.jpg" alt="">
+	      </a>
+	        <header>
+	        	<a class="cat" href="category?id=${a.category.id }">${a.category.name }<i></i>
+	        	</a>
+	          <h2><a href="article?id=${a.id }" title="">${a.title}</a></h2>
 	        </header>
 	        <p class="meta">
 	          <time class="time">
 	          	<i class="glyphicon glyphicon-time"></i> 
-	          			${a.createtime }</time>
+	          	  <fmt:formatDate value="${a.createtime }"
+	          	  		pattern="yyyy-MM-dd HH:mm:ss"/>
+	          			<%-- ${a.createtime } --%></time>
 	          <span class="views">
 	          		<i class="glyphicon glyphicon-eye-open"></i>
 	          			 共${a.readcnt }人围观
@@ -45,7 +55,7 @@
           <li class="prev-page"></li>
           <li class="active"><span>1</span></li>
           <li><a href="?page=2">2</a></li>
-          <li class="next-page"><a href="?page=2">下一页</a></li>
+		  <li class="next-page"><a href="index">下一页</a></li>
           <li><span>共 2 页</span></li>
         </ul>
       </nav>
